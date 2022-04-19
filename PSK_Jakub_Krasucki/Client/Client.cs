@@ -1,6 +1,7 @@
 ﻿using Server.utils;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Net.Sockets;
 using System.Text;
@@ -17,34 +18,41 @@ namespace Client
 
         static void StartTCP()
         {
-            while(true)
+            string server = "localhost";
+            int port = 12345;
+            using (TcpClient client = new TcpClient(server, port))
             {
-                string server = "localhost";
-                int port = 12345;
-                TcpClient client = new TcpClient(server, port);
                 NetworkStream stream = client.GetStream();
-
                 while (true)
                 {
-                    string message = Ping.Query(1024,1024);
-
-                    byte[] data = Encoding.ASCII.GetBytes(message);
-                    stream.Write(data, 0, data.Length);
-                    Console.WriteLine("Wysłane: {0}", message);
-
-                    byte[] response = new byte[256];
-                    string responseStr = string.Empty;
-                    int bytes;
-                    do
+                    Console.WriteLine("Wprowadź komende");
+                    string command = Console.ReadLine();
+                    if (command == "exit")
                     {
-                        bytes = stream.Read(response, 0, response.Length);
-                        responseStr += Encoding.ASCII.GetString(response, 0, bytes);
-                    } while (stream.DataAvailable);
-                    Console.WriteLine("Pobrane: {0}", responseStr);
+                        break;
+                    }
+                    else
+                    {
+                        string[] splitted = command.Split();
+                        string message = Ping.Query(int.Parse(splitted[1]), int.Parse(splitted[1]));
+                        byte[] data = Encoding.ASCII.GetBytes(message);
+                        Stopwatch stopwatch = Stopwatch.StartNew();
+                        stream.Write(data, 0, data.Length);
+                        byte[] response = new byte[256];
+                        string responseStr = string.Empty;
+                        int bytes;
+                        do
+                        {
+                            bytes = stream.Read(response, 0, response.Length);
+                            responseStr += Encoding.ASCII.GetString(response, 0, bytes);
+                        } while (stream.DataAvailable);
+                        stopwatch.Stop();
+                        Console.WriteLine("Ping " + stopwatch.ElapsedMilliseconds);
+                    }
                 }
-        
-                client.Close();
+                stream.Close();
             }
+           
         }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using Server.utils;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
@@ -12,7 +13,8 @@ namespace Server.protocols
     public class TCPL : IListener
     {
         TcpListener server;
-        IPAddress localAddress;
+        IPAddress localAddress; 
+        CommunicatorD onConnect;
         int port;
 
         public TCPL(IPAddress localAddress, int port)
@@ -21,33 +23,20 @@ namespace Server.protocols
             this.port = port;
 
         }
+        private void AcceptHandler(IAsyncResult result)
+        {
+            TcpClient client = server.EndAcceptTcpClient(result);
+            server.BeginAcceptTcpClient(AcceptHandler, server);
+            ICommunicator communicator = new TCPC(client);
+            onConnect(communicator);
+            Console.WriteLine("Udało się nazwiązać połączenie z " + client.Client.RemoteEndPoint);
+        }
         public void Start(CommunicatorD onConnect)
         {
+            this.onConnect = onConnect; 
             server = new TcpListener(localAddress, port);
             server.Start();
-            byte[] bytes = new byte[256];
-            while (true)
-            {
-                Console.WriteLine("Trwa łączenie....");
-                TcpClient client = server.AcceptTcpClient();
-
-                Console.WriteLine("Udało się nazwiązać połączenie!");
-                //od 34 lini to komunikator nie listener
-                int len;
-                string data = null;
-                NetworkStream stream = client.GetStream();
-                while ((len = stream.Read(bytes, 0, bytes.Length)) > 0)
-                {
-                    data += Encoding.ASCII.GetString(bytes, 0, len);
-                    ICommunicator communicator = new TCPC(client);
-                    //listener ma tylko nasłuchiwać i tworzy komunikatory
-                    CommandD command = new CommandD(Ping.Pong);
-                    //on Connect metoda serwera która uruchomi komunikator
-                    communicator.Start(command, onConnect);
-                    data = null;
-                }
-                client.Close();
-            }
+            server.BeginAcceptTcpClient(AcceptHandler, server);
         }
 
         public void Stop()
@@ -60,24 +49,61 @@ namespace Server.protocols
     {
 
         private TcpClient client;
+        Task task;
+        CommandD onCommand;
+        CommunicatorD onDisconnect;
+
         public TCPC(TcpClient tcpClient)
         {
             client = tcpClient;
         }
-        //dostosowywać do rozmiaru
-        //dostaje pytanie zwraca odpowiedź
         public void Start(CommandD onCommand, CommunicatorD onDisconnect)
         {
+            this.onCommand = onCommand;
+            this.onDisconnect = onDisconnect;
+            task = new Task(() => TaskHandler());
+            task.Start();
+        }
+
+        private void TaskHandler()
+        {
+            Console.WriteLine("Rozpoczęcie komunikacji");
             NetworkStream stream = client.GetStream();
-            string message = onCommand("pong 1024");
-            byte[] data = Encoding.ASCII.GetBytes(message);
-            stream.Write(data, 0, data.Length);
-            Console.WriteLine("Wysłano: {0}", message);
+            byte[] bytes = new byte[256];
+
+            string data = string.Empty;
+
+            while (client.Connected)
+            {
+                try
+                {
+                    if (stream.DataAvailable)
+                    {
+                        int len = stream.Read(bytes, 0, bytes.Length);
+                        data += Encoding.ASCII.GetString(bytes, 0, len);
+                    }
+                    else if(data != string.Empty)
+                    {
+                        string message = onCommand(data);
+                        bytes = Encoding.ASCII.GetBytes(message);
+                        stream.Write(bytes, 0, bytes.Length);
+                        Console.WriteLine("Wysłano: {0}", message);
+                        data = string.Empty;
+                    }
+                }
+                catch
+                {
+                    Stop();
+                }
+            }
+            stream.Close();
         }
 
         public void Stop()
         {
+            onDisconnect(this);
             client.Close();
+            Console.WriteLine("Koniec komunikacji");
         }
     }
 }

@@ -43,6 +43,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="enums\ServerStatus.cs" />
     <Compile Include="Interfaces.cs" />
     <Compile Include="protocols\TCP.cs" />
     <Compile Include="Server.cs" />

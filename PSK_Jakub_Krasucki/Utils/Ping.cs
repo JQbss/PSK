@@ -10,7 +10,7 @@ namespace Server.utils
     {
         public static string Query(int request, int response)
         {
-            string query = "ping " + response;
+            string query = "ping " + response + " ";
             return query+RandomString(request-query.Length-1) + "\n";
         }
         private static string RandomString(int length)
@@ -25,9 +25,11 @@ namespace Server.utils
         }
         public static string Pong(string line)
         {
+            
             string[] array = line.Split();
             string response = "pong ";
-            return response+RandomString(int.Parse(array[1]) - response.Length-2)+"\n";
+            string result = response + RandomString(int.Parse(array[1]) - response.Length - 2) + "\n";
+            return result;
         }
     }
 }
