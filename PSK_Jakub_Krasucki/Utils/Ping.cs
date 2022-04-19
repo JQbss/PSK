@@ -25,7 +25,6 @@ namespace Server.utils
         }
         public static string Pong(string line)
         {
-            
             string[] array = line.Split();
             string response = "pong ";
             string result = response + RandomString(int.Parse(array[1]) - response.Length - 2) + "\n";

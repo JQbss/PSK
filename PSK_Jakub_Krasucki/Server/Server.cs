@@ -116,6 +116,7 @@ namespace Server
         {
             Server server = new Server();
             server.AddServiceModule("ping", new PingService());
+            server.AddServiceModule("chat", new ChatService());
             server.Start();
             server.AddListener(new protocols.TCPL(IPAddress.Any, 12345));
             server.WaitForStop();

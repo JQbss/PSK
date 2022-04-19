@@ -48,6 +48,7 @@
     <Compile Include="protocols\TCP.cs" />
     <Compile Include="Server.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="services\ChatService.cs" />
     <Compile Include="services\PingService.cs" />
   </ItemGroup>
   <ItemGroup>
