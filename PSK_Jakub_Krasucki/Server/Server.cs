@@ -77,7 +77,7 @@ namespace Server
             {
                 return services[serviceName].AnswerCommand(command);
             }
-            return "Brak możliwości połaczenia z serwerem.\n";
+            return "Brak mozliwosci polaczenia z serwerem.\n";
         }
         void Start()
         {
@@ -86,17 +86,6 @@ namespace Server
                 listeners[i].Start(new CommunicatorD(AddCommunicator));
             }
             serverStatus = ServerStatus.Running;
-        }
-        void WaitForStop()
-        {
-            while (communicators.Count != 0)
-            {
-                Thread.Sleep(1000);
-            }
-            while (services.Count != 0)
-            {
-                Thread.Sleep(1000);
-            }
         }
         void Stop()
         {
@@ -117,9 +106,13 @@ namespace Server
             Server server = new Server();
             server.AddServiceModule("ping", new PingService());
             server.AddServiceModule("chat", new ChatService());
+            server.AddServiceModule("ftp", new FtpService());
             server.Start();
             server.AddListener(new protocols.TCPL(IPAddress.Any, 12345));
-            server.WaitForStop();
+            while (true)
+            {
+                //można zastąpić pętlą, i w usłudze komunikacyjnej wyłączać serwer, dodać command lina, sprawdzać komunikacje, nasłuchiwaczy
+            }
             server.Stop();
         }
     }

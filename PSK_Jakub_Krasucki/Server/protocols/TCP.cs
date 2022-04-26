@@ -29,7 +29,7 @@ namespace Server.protocols
             server.BeginAcceptTcpClient(AcceptHandler, server);
             ICommunicator communicator = new TCPC(client);
             onConnect(communicator);
-            Console.WriteLine("Udało się nazwiązać połączenie z " + client.Client.RemoteEndPoint);
+            Console.WriteLine("Udalo się nazwiazac polaczenie z " + client.Client.RemoteEndPoint);
         }
         public void Start(CommunicatorD onConnect)
         {
@@ -67,7 +67,7 @@ namespace Server.protocols
 
         private void TaskHandler()
         {
-            Console.WriteLine("Rozpoczęcie komunikacji");
+            Console.WriteLine("Rozpoczecie komunikacji");
             NetworkStream stream = client.GetStream();
             byte[] bytes = new byte[256];
 
@@ -82,12 +82,12 @@ namespace Server.protocols
                         int len = stream.Read(bytes, 0, bytes.Length);
                         data += Encoding.ASCII.GetString(bytes, 0, len);
                     }
-                    else if(data != string.Empty)
+                    else if(data != string.Empty)//sprawdzać newlinem cz jest pelne polecenie 
                     {
                         string message = onCommand(data);
                         bytes = Encoding.ASCII.GetBytes(message);
                         stream.Write(bytes, 0, bytes.Length);
-                        Console.WriteLine("Wysłano: {0}", message);
+                        Console.WriteLine("Wysłano: {0}", message); // na koniec można usunąć ewentualnie plik z logami, z możliwością włączaniem
                         data = string.Empty;
                     }
                 }
