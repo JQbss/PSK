@@ -16,7 +16,7 @@ namespace Server
         Dictionary<string, IServiceModule> services = new Dictionary<string, IServiceModule>();
         List<IListener> listeners = new List<IListener>();
         List<ICommunicator> communicators = new List<ICommunicator>();
-
+        public bool IsServerStarted { get; set; }
         private object _lockCommunicator = new object();
         private object _lockListener = new object();
 
@@ -81,7 +81,12 @@ namespace Server
         }
         void Start()
         {
-            for(int i = 0; i < listeners.Count; i++)
+            AddServiceModule("config", new ConfigurationService(
+                    new ConfigurationService.AddListenerD(AddListener),
+                    new ConfigurationService.RemoveListenerD(RemoveListener),
+                    new ConfigurationService.AddServiceD(AddServiceModule),
+                    new ConfigurationService.RemoveServiceModuleD(RemoveServiceModule)));
+            for (int i = 0; i < listeners.Count; i++)
             {
                 listeners[i].Start(new CommunicatorD(AddCommunicator));
             }
@@ -99,7 +104,6 @@ namespace Server
             }
             communicators.Clear();
             services.Clear();
-
         }
         static void Main()
         {
@@ -109,11 +113,10 @@ namespace Server
             server.AddServiceModule("ftp", new FtpService());
             server.Start();
             server.AddListener(new protocols.TCPL(IPAddress.Any, 12345));
-            while (true)
-            {
-                //można zastąpić pętlą, i w usłudze komunikacyjnej wyłączać serwer, dodać command lina, sprawdzać komunikacje, nasłuchiwaczy
-            }
-            server.Stop();
+            while (true);
+            //można zastąpić pętlą, i w usłudze komunikacyjnej wyłączać serwer,
+            //dodać command lina, sprawdzać komunikacje, nasłuchiwaczy
+            
         }
     }
 }

@@ -48,8 +48,6 @@ namespace Client
             int port = 12345;
             TcpClient client = new TcpClient(server, port);
             NetworkStream stream = client.GetStream();
-            //pomieszana usługa z medium. Klient wpisuje test ping 10 i rozmiar, daje 10 pingów i 10 odbiera. Dostaje z zewnątrz medium komunikacyjne, mierzy czas.
-            //powinna być ogólna funkcja. Ogólna funkcja od realizowania zadań, zaparametryzowaną z medium komunikacyjnym,
             
             Stopwatch stopwatch = Stopwatch.StartNew();
             stream.Write(data, 0, data.Length);

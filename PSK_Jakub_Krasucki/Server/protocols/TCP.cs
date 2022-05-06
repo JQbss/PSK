@@ -82,7 +82,7 @@ namespace Server.protocols
                         int len = stream.Read(bytes, 0, bytes.Length);
                         data += Encoding.ASCII.GetString(bytes, 0, len);
                     }
-                    else if(data != string.Empty)//sprawdzać newlinem cz jest pelne polecenie 
+                    else if(data != string.Empty)//sprawdzać newlinem czy jest pelne polecenie 
                     {
                         string message = onCommand(data);
                         bytes = Encoding.ASCII.GetBytes(message);
