@@ -114,8 +114,6 @@ namespace Server
             server.Start();
             server.AddListener(new protocols.TCPL(IPAddress.Any, 12345));
             while (true);
-            //można zastąpić pętlą, i w usłudze komunikacyjnej wyłączać serwer,
-            //dodać command lina, sprawdzać komunikacje, nasłuchiwaczy
             
         }
     }

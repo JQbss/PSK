@@ -35,21 +35,49 @@ namespace Server.services
                 case "addlistener":
                     return AddListener(splitted);
                 case "removelistener":
+                    return RemoveListener(splitted);
                 case "addservice":
+                    return AddService(splitted);
                 case "removeservice":
                 default:
                     return "Nieprawidłowa komenda";
             }
         }
-        //c addlistener name listenertype address ip
         private string AddListener(string[] splitted)
         {
-            StringBuilder sb = new StringBuilder();
-            for (int i = 3; i < splitted.Length; i++) sb.Append(splitted[i] + " ");
-            Type t = typeof(AddListenerD);
-            object o = Activator.CreateInstance(t, sb);
+            String s = "";
+            for (int i = 3; i < splitted.Length; i++)
+            {
+                s+=splitted[i] + " ";
+            }
+            s=s.Trim();
+            Type t = Type.GetType("Server.protocols." + splitted[2], false,true);
+
+            object o = Activator.CreateInstance(t, s);
             addListenerD((IListener)o);
             return "Dodano nowy listener";
+        }
+
+        private string RemoveListener(string[] splitted)
+        {
+            String s = "";
+            for (int i = 3; i < splitted.Length; i++)
+            {
+                s += splitted[i] + " ";
+            }
+            s = s.Trim();
+            Type t = Type.GetType("Server.protocols." + splitted[2], false, true);
+            object o = Activator.CreateInstance(t, s);
+            removeListenerD((IListener)o);
+            return "Usunieto listener";
+        }
+
+        private string AddService(string[] splitted)
+        {
+            Type t = Type.GetType("Server.services." + splitted[2], false, true);
+            object o = Activator.CreateInstance(t);
+            addServiceD(splitted[3],(IServiceModule)o);
+            return "Dodano serwis";
         }
     }
 }

@@ -23,6 +23,20 @@ namespace Server.protocols
             this.port = port;
 
         }
+
+        public TCPL(string config)
+        {
+            if(config != "")
+            {
+                string[] splitted = config.Split(' ');
+                if(splitted.Length > 1)
+                {
+                    this.localAddress = IPAddress.Parse(splitted[0]);
+                    this.port = int.Parse(splitted[1]);
+                }
+            }
+        }
+
         private void AcceptHandler(IAsyncResult result)
         {
             TcpClient client = server.EndAcceptTcpClient(result);

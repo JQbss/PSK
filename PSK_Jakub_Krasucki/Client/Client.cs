@@ -46,19 +46,23 @@ namespace Client
             Console.WriteLine(response);
         }
 
+        private static void ConfigCommand(Medium medium, string command)
+        {
+            string response = medium.QA(command);
+            Console.WriteLine(response);
+        }
+
         static void Main(string[] args)
         {
-            Medium medium = null;
-
             while (true)
             {
-               
                 Console.WriteLine("Wybierz medium");
                 Console.WriteLine("---------------");
                 Console.WriteLine("1 - TCP");
                 Console.WriteLine("Default - TCP");
                 Console.WriteLine("---------------");
                 int protocol = Convert.ToInt32(Console.ReadLine());
+                Medium medium;
                 switch (protocol)
                 {
                     case 1:
@@ -75,7 +79,7 @@ namespace Client
                     break;
                 }
             }
-            
+
         }
 
         private static string GetCommand(string command, Medium medium)
@@ -92,6 +96,10 @@ namespace Client
             else if (splitted[0].Equals("ftp"))
             {
                 FtpCommand(medium, command);
+            }
+            else if (splitted[0].Equals("config"))
+            {
+                ConfigCommand(medium, command);
             }
             return splitted[0];
         }
