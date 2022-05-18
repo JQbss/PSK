@@ -1,82 +1,104 @@
-﻿using Server.utils;
+﻿using Client.mediums;
+using Server.utils;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Net.Sockets;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Client
 {
+    
     public class Client
     {
+        static string server = "localhost";
+        static int port = 12345;
+        private static void PingCommand(Medium medium, string[] splitted)
+        {
+            int numberOfPings = splitted.Length > 3 ? int.Parse(splitted[3]) : 1;
+            List<TimeSpan> times = new List<TimeSpan>();
+            for (int i = 0; i < numberOfPings; i++)
+            {
+                string request = Ping.Query(int.Parse(splitted[1]), int.Parse(splitted[1]));
+                Stopwatch stopwatch = Stopwatch.StartNew();
+                string response = medium.QA(request);
+                stopwatch.Stop();
+                times.Add(stopwatch.Elapsed);
+                Console.Write(stopwatch.Elapsed);
+                Console.WriteLine(" bytes:"+Encoding.ASCII.GetByteCount(response));
+                Thread.Sleep(1000);
+            }
+            Console.Write("Średni czas: ");
+            Console.WriteLine(AvargeTime(times));
+        }
+
+        private static void ChatCommand(Medium medium, string command)
+        {
+            string response = medium.QA(command);
+            Console.WriteLine(response);
+        }
+        private static void FtpCommand(Medium medium, string command)
+        {
+            string response = medium.QA(command);
+            Console.WriteLine(response);
+        }
+
         static void Main(string[] args)
         {
+            Medium medium = null;
+
             while (true)
             {
+               
+                Console.WriteLine("Wybierz medium");
+                Console.WriteLine("---------------");
+                Console.WriteLine("1 - TCP");
+                Console.WriteLine("Default - TCP");
+                Console.WriteLine("---------------");
+                int protocol = Convert.ToInt32(Console.ReadLine());
+                switch (protocol)
+                {
+                    case 1:
+                    default:
+                        TcpClient client = new TcpClient(server, port);
+                        NetworkStream stream = client.GetStream();
+                        medium = new MTCP(stream);
+                        break;
+                }
                 Console.WriteLine("Wprowadź komende");
-                string command = GetCommand(Console.ReadLine());
+                string command = GetCommand(Console.ReadLine(), medium);
                 if (command == "exit")
                 {
                     break;
                 }
-                byte[] data = Encoding.ASCII.GetBytes(command + Environment.NewLine);
-                Console.WriteLine("Wybierz medium");
-                Console.WriteLine("---------------");
-                Console.WriteLine("0 - TCP");
-                Console.WriteLine("Default - TCP");
-                Console.WriteLine("---------------");
-                int medium = Convert.ToInt32(Console.ReadLine());
-                switch (medium)
-                {
-                    case 1:
-                        StartTCP(data);
-                        break;
-                    default:
-                        StartTCP(data);
-                        break;
-                }
-                
             }
             
         }
 
-        static void StartTCP(byte[] data)
-        {
-            string server = "localhost";
-            int port = 12345;
-            TcpClient client = new TcpClient(server, port);
-            NetworkStream stream = client.GetStream();
-            
-            Stopwatch stopwatch = Stopwatch.StartNew();
-            stream.Write(data, 0, data.Length);
-            byte[] response = new byte[256];
-            string responseStr = string.Empty;
-            int bytes;
-            do
-            {
-                bytes = stream.Read(response, 0, response.Length);
-                responseStr += Encoding.ASCII.GetString(response, 0, bytes);
-            } while (stream.DataAvailable);
-            stopwatch.Stop();
-            Console.WriteLine(responseStr);
-            Console.WriteLine("\n"+stopwatch.Elapsed);
-            Console.WriteLine("_____________________________");
-            stream.Close();
-        }
-
-        private static string GetCommand(string command)
+        private static string GetCommand(string command, Medium medium)
         {
             string[] splitted = command.Split();
             if (splitted[0].Equals("ping"))
             {
-                return Ping.Query(int.Parse(splitted[1]), int.Parse(splitted[1]));
+                PingCommand(medium, splitted);
             }
-            else
+            else if (splitted[0].Equals("chat"))
             {
-                return command;
+                ChatCommand(medium,command);
             }
+            else if (splitted[0].Equals("ftp"))
+            {
+                FtpCommand(medium, command);
+            }
+            return splitted[0];
+        }
+
+        private static TimeSpan AvargeTime(List<TimeSpan> times)
+        {
+            return TimeSpan.FromMilliseconds(times.Select(s => s.TotalMilliseconds).Average());
         }
     }
 }
