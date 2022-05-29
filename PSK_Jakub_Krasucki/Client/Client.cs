@@ -4,10 +4,12 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using Utils;
 
 namespace Client
 {
@@ -15,6 +17,7 @@ namespace Client
     public class Client
     {
         static string server = "localhost";
+        static string udpServer = "127.0.0.1";
         static int port = 12345;
         private static void PingCommand(Medium medium, string[] splitted)
         {
@@ -59,12 +62,23 @@ namespace Client
                 Console.WriteLine("Wybierz medium");
                 Console.WriteLine("---------------");
                 Console.WriteLine("1 - TCP");
+                Console.WriteLine("2 - UDP");
+                Console.WriteLine("3 - Net Remoting");
                 Console.WriteLine("Default - TCP");
                 Console.WriteLine("---------------");
                 int protocol = Convert.ToInt32(Console.ReadLine());
                 Medium medium;
                 switch (protocol)
                 {
+                    case 2:
+                        
+                        IPEndPoint ip = new IPEndPoint(IPAddress.Parse(udpServer), 12346);
+                        medium = new MUDP(ip);
+                        break;
+                    case 3:
+                        NetRemotingUtil netRemotingUtil = (NetRemotingUtil)Activator.GetObject(typeof(NetRemotingUtil), "tcp://localhost:65432/command");
+                        medium = new MNET(netRemotingUtil);
+                        break;
                     case 1:
                     default:
                         TcpClient client = new TcpClient(server, port);

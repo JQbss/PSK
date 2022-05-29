@@ -113,6 +113,8 @@ namespace Server
             server.AddServiceModule("ftp", new FtpService());
             server.Start();
             server.AddListener(new protocols.TCPL(IPAddress.Any, 12345));
+            server.AddListener(new protocols.UDPL(IPAddress.Any, 12346));
+            server.AddListener(new protocols.NetRemotingL("65432"));
             while (true);
             
         }

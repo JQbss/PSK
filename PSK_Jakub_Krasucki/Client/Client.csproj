@@ -45,7 +45,9 @@
   <ItemGroup>
     <Compile Include="Client.cs" />
     <Compile Include="mediums\Medium.cs" />
+    <Compile Include="mediums\MNET.cs" />
     <Compile Include="mediums\MTCP.cs" />
+    <Compile Include="mediums\MUDP.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

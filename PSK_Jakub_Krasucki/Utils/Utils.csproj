@@ -43,6 +43,7 @@
   <ItemGroup>
     <Compile Include="Base64Converter.cs" />
     <Compile Include="MessageInformation.cs" />
+    <Compile Include="NetRemotingUtil.cs" />
     <Compile Include="Ping.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

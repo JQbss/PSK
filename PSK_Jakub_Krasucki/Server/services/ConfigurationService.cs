@@ -39,6 +39,7 @@ namespace Server.services
                 case "addservice":
                     return AddService(splitted);
                 case "removeservice":
+                    return RemoveService(splitted);
                 default:
                     return "Nieprawidłowa komenda";
             }
@@ -78,6 +79,12 @@ namespace Server.services
             object o = Activator.CreateInstance(t);
             addServiceD(splitted[3],(IServiceModule)o);
             return "Dodano serwis";
+        }
+
+        private string RemoveService(string[] splitted)
+        {
+            removeServiceModuleD(splitted[2]);
+            return "Usunięto sewrwis";
         }
     }
 }
