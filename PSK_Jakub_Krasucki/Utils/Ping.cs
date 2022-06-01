@@ -27,7 +27,7 @@ namespace Server.utils
         {
             string[] array = line.Split();
             string response = "pong ";
-            string result = response + RandomString(int.Parse(array[1]) - response.Length - 2) + "\n";
+            string result = response + RandomString(int.Parse(array[1]) - response.Length - 1) + "\n";
             return result;
         }
     }

@@ -13,7 +13,6 @@ namespace Server.protocols
     public class NetRemotingL : IListener
     {
         private TcpChannel tcpChannel;
-        private int port;
 
         public NetRemotingL(TcpChannel tcpChannel)
         {
@@ -23,7 +22,6 @@ namespace Server.protocols
         public NetRemotingL(string port)
         {
             tcpChannel = new TcpChannel(int.Parse(port));
-            this.port = int.Parse(port);
         }
 
         public void Start(CommunicatorD onConnect)

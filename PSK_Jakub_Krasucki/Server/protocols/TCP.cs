@@ -21,7 +21,6 @@ namespace Server.protocols
         {
             this.localAddress = localAddress;
             this.port = port;
-
         }
 
         public TCPL(string config)

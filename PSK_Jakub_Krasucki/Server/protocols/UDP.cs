@@ -52,6 +52,8 @@ namespace Server.protocols
         private IPEndPoint iPEndPoint;
         private CommandD onCommand;
         private CommunicatorD onDisconnect;
+        private Task task;
+        private bool flag = true;
         public UDPC(UdpClient client)
         {
             this.client = client;
@@ -66,33 +68,26 @@ namespace Server.protocols
         {
             this.onCommand = onCommand;
             this.onDisconnect = onDisconnect;
-            client.BeginReceive(new AsyncCallback(TaskHandler),client);
+            task = new Task(() => TaskHandler());
+            task.Start();
         }
 
-        private void TaskHandler(IAsyncResult asyncResult)
+        private void TaskHandler()
         {
-            try
+            while (flag)
             {
-                byte[] reciveBytes = client.EndReceive(asyncResult, ref iPEndPoint);
+                byte[] reciveBytes = client.Receive(ref iPEndPoint);
                 string reciveString = Encoding.ASCII.GetString(reciveBytes);
                 string recive = onCommand(reciveString);
                 byte[] sendBytes = Encoding.ASCII.GetBytes(recive);
-
-                Console.WriteLine(recive);
-
-                client.Send(sendBytes,sendBytes.Length,iPEndPoint);
-                client.BeginReceive(new AsyncCallback(TaskHandler), client);
-            }catch (Exception ex)
-            {
-                Console.WriteLine(ex.Message.ToString());
-                onDisconnect(this);
+                client.Send(sendBytes, sendBytes.Length, iPEndPoint);
             }
-           
         }
 
         public void Stop()
         {
             onDisconnect(this);
+            flag = false;
             client.Close();
             Console.WriteLine("Koniec komunikacji");
         }

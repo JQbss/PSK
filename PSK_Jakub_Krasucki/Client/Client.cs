@@ -74,7 +74,6 @@ namespace Client
                 switch (protocol)
                 {
                     case 2:
-                        
                         IPEndPoint ip = new IPEndPoint(IPAddress.Parse(udpServer), 12346);
                         medium = new MUDP(ip);
                         break;
