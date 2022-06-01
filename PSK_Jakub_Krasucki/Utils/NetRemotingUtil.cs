@@ -16,7 +16,7 @@ namespace Utils
         }
         public string Command(string command)
         {
-            if(onCommand == null)
+            if(onCommand != null)
             {
                 return onCommand(command);
             }

@@ -78,7 +78,7 @@ namespace Client
                         medium = new MUDP(ip);
                         break;
                     case 3:
-                        NetRemotingUtil netRemotingUtil = (NetRemotingUtil)Activator.GetObject(typeof(NetRemotingUtil), "tcp://localhost:65432/command");
+                        NetRemotingUtil netRemotingUtil = (NetRemotingUtil)Activator.GetObject(typeof(NetRemotingUtil), "tcp://localhost:30000/command");
                         medium = new MNET(netRemotingUtil);
                         break;
                     case 4:

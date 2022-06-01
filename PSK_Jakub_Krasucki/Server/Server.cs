@@ -115,7 +115,7 @@ namespace Server
             server.Start();
             server.AddListener(new protocols.TCPL(IPAddress.Any, 12345));
             server.AddListener(new protocols.UDPL(IPAddress.Any, 12346));
-            //server.AddListener(new protocols.NetRemotingL("65432"));
+            server.AddListener(new protocols.NetRemotingL("30000"));
             server.AddListener(new protocols.RS232L(new SerialPort("COM2", 9600, Parity.None, 8, StopBits.One)));
             server.AddListener(new protocols.FilesManagerL(@"../../../FileMedium"));
             while (true);
