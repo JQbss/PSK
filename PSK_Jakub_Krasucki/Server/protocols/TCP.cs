@@ -96,12 +96,12 @@ namespace Server.protocols
                         int len = stream.Read(bytes, 0, bytes.Length);
                         data += Encoding.ASCII.GetString(bytes, 0, len);
                     }
-                    else if(data != string.Empty)//sprawdzać newlinem czy jest pelne polecenie 
+                    else if(data != string.Empty)
                     {
                         string message = onCommand(data);
                         bytes = Encoding.ASCII.GetBytes(message);
                         stream.Write(bytes, 0, bytes.Length);
-                        Console.WriteLine("Wysłano: {0}", message); // na koniec można usunąć ewentualnie plik z logami, z możliwością włączaniem
+                        Console.WriteLine("Wysłano: {0}", message);
                         data = string.Empty;
                     }
                 }

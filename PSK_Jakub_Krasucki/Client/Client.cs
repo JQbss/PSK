@@ -3,6 +3,7 @@ using Server.utils;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO.Ports;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
@@ -64,6 +65,8 @@ namespace Client
                 Console.WriteLine("1 - TCP");
                 Console.WriteLine("2 - UDP");
                 Console.WriteLine("3 - Net Remoting");
+                Console.WriteLine("4 - RS232");
+                Console.WriteLine("5 - File Manager");
                 Console.WriteLine("Default - TCP");
                 Console.WriteLine("---------------");
                 int protocol = Convert.ToInt32(Console.ReadLine());
@@ -78,6 +81,13 @@ namespace Client
                     case 3:
                         NetRemotingUtil netRemotingUtil = (NetRemotingUtil)Activator.GetObject(typeof(NetRemotingUtil), "tcp://localhost:65432/command");
                         medium = new MNET(netRemotingUtil);
+                        break;
+                    case 4:
+                        SerialPort serialPort = new SerialPort("COM1", 9600, Parity.None, 8, StopBits.One);
+                        medium = new MRS232(serialPort);
+                        break;
+                    case 5:
+                        medium = new MFile(@"../../../FileMedium/test.txt");
                         break;
                     case 1:
                     default:

@@ -46,6 +46,7 @@
   <ItemGroup>
     <Compile Include="enums\ServerStatus.cs" />
     <Compile Include="Interfaces.cs" />
+    <Compile Include="protocols\FilesManager.cs" />
     <Compile Include="protocols\NetRemoting.cs" />
     <Compile Include="protocols\RS232.cs" />
     <Compile Include="protocols\TCP.cs" />

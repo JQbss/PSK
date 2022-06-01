@@ -10,6 +10,7 @@ namespace Server.protocols
     public class RS232L : IListener
     {
         private SerialPort serialPort;
+        private CommunicatorD onConnect;
 
         public RS232L(SerialPort serialPort)
         {
@@ -27,9 +28,10 @@ namespace Server.protocols
 
         public void Start(CommunicatorD onConnect)
         {
+            this.onConnect = onConnect;
             if(serialPort != null)
             {
-                onConnect(new RS232C(serialPort));
+                this.onConnect(new RS232C(serialPort));
             }
         }
 
@@ -57,8 +59,14 @@ namespace Server.protocols
         private void Target(object sender, SerialDataReceivedEventArgs e)
         {
             SerialPort serialPort = (SerialPort)sender;
-            string command = serialPort.ReadLine();
-            serialPort.WriteLine(command);
+            string command = "";
+            int i = 5;
+            while (command.Equals(string.Empty) && i>0)
+            {
+                command = serialPort.ReadLine();
+                i--;
+            }
+            serialPort.WriteLine(onCommand(command));
         }
 
         public void Start(CommandD onCommand, CommunicatorD onDisconnect)
@@ -70,6 +78,7 @@ namespace Server.protocols
 
         public void Stop()
         {
+            onDisconnect(this);
             serialPort.Close();
         }
     }
