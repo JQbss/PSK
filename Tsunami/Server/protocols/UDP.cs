@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
@@ -13,26 +14,11 @@ namespace Server.protocols
         private UdpClient client;
         private IPAddress localAddress;
         private int port;
-
         public UDPL(IPAddress localAddress, int port)
         {
             this.localAddress = localAddress;
             this.port = port;
         }
-
-        public UDPL(string config)
-        {
-            if (config != "")
-            {
-                string[] splitted = config.Split(' ');
-                if (splitted.Length > 1)
-                {
-                    this.localAddress = IPAddress.Parse(splitted[0]);
-                    this.port = int.Parse(splitted[1]);
-                }
-            }
-        }
-
         public void Start(CommunicatorD onConnect)
         {
             IPEndPoint iPEndPoint = new IPEndPoint(localAddress, port);
@@ -45,7 +31,6 @@ namespace Server.protocols
             client.Close();
         }
     }
-
     public class UDPC : ICommunicator
     {
         private UdpClient client;
@@ -79,7 +64,9 @@ namespace Server.protocols
                 byte[] reciveBytes = client.Receive(ref iPEndPoint);
                 string reciveString = Encoding.ASCII.GetString(reciveBytes);
                 string recive = onCommand(reciveString);
-                byte[] sendBytes = Encoding.ASCII.GetBytes(recive);
+                StringReader stringReader = new StringReader(recive);
+                string line = stringReader.ReadLine();
+                byte[] sendBytes = Encoding.ASCII.GetBytes(line);
                 client.Send(sendBytes, sendBytes.Length, iPEndPoint);
             }
         }

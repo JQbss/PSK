@@ -4,9 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Utils
+namespace Server.enums
 {
-    public class Class1
+    public enum ServerStatus
     {
+        New = 0,
+        Running = 1,
+        Stop = 2,
     }
 }

@@ -44,6 +44,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Client.cs" />
+    <Compile Include="Command.cs" />
+    <Compile Include="Config.cs" />
+    <Compile Include="medium\MTCP.cs" />
+    <Compile Include="medium\MUDP.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
