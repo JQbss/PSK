@@ -13,8 +13,8 @@ namespace Client.medium
         {
             TcpClient client = new TcpClient(Config.host, Config.port);
             NetworkStream stream = client.GetStream();
-            bool exitflag = false;
-            while (!exitflag)
+            bool exit = false;
+            while (!exit)
             {
                 Console.WriteLine("Podaj komende");
                 byte[] data = Encoding.ASCII.GetBytes(Command.SendCommand(Console.ReadLine()));
@@ -28,7 +28,7 @@ namespace Client.medium
                     responseStr.Append(Encoding.ASCII.GetString(response, 0, bytes));
                 }
                 while (stream.DataAvailable);
-                exitflag = Command.Response(responseStr.ToString());
+                exit = Command.Response(responseStr.ToString());
             }
         }
     }
