@@ -32,20 +32,13 @@ namespace Client.medium
             byte[] data = Encoding.ASCII.GetBytes("get " + taskID);
             udpClient.Send(data, data.Length);
 
-            Stopwatch sw = new Stopwatch();
-            sw.Start();
-            do
+            if (udpClient.Available != 0)
             {
-                if (udpClient.Available != 0)
-                {
-                    byte[] receiveBytes = udpClient.Receive(ref ipe);
-                    string receiveString = Encoding.ASCII.GetString(receiveBytes);
-                    received[int.Parse(receiveString.Split()[0]) - 1] = true;
-                    receivedStr[int.Parse(receiveString.Split()[0]) - 1] = receiveString.Split()[1];
-                    sw.Restart();
-                }
-                else Thread.Sleep(100);
-            } while (sw.ElapsedMilliseconds < 1000);
+                byte[] receiveBytes = udpClient.Receive(ref ipe);
+                string receiveString = Encoding.ASCII.GetString(receiveBytes);
+                received[int.Parse(receiveString.Split()[0]) - 1] = true;
+                receivedStr[int.Parse(receiveString.Split()[0]) - 1] = receiveString.Split()[1];
+            }
 
             bool success = false;
             while (!success)
